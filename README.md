@@ -20,10 +20,10 @@ Apresentação 02/05/2016:
 
 Para funcionar precisa do redis e oursql instalado
 
-'''
+```
 pip install redis
-'''
+```
 
-'''
+```
 pip install oursql
-'''
+```
