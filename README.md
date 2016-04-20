@@ -14,3 +14,16 @@ Apresentação 02/05/2016:
     - Consultar o estado e retornar os dados de todos os logradouros deste estado.
     - Cadastrar um novo usuário.
     - Inserir um pedido para determinado usuário.
+
+
+# Precisa executar antes
+
+Para funcionar precisa do redis e oursql instalado
+
+'''
+pip install redis
+'''
+
+'''
+pip install oursql
+'''
