@@ -3,9 +3,28 @@ import oursql
 import redis
 import datetime
 
-# "endereço do servidor", "usuario", "senha" e "banco"
-db_mysql = oursql.connect(host="localhost",user="root",passwd="",db="aulaivo")
+#Ao início do programa, o programa espera as informacoes da base no modelo host, user, senha e db do MYSQL,
+#caso algum dado seja digitado incorretamente, avisa o erro e tenta de novo.
+#o programa então tenta conexão com o redis, caso consiga, prossegue, senão acusa o erro!
 
+while True:
+	my_SQL_host = raw_input ("Host (default: localhost): ");
+	my_SQL_user = raw_input ("User MySQL: ");
+	my_SQL_senha = raw_input ("Password MySQL: ");
+	my_SQL_db = raw_input ("Database: ");
+
+	try:
+		db_mysql = oursql.connect(host = my_SQL_host, user=my_SQL_user, passwd=my_SQL_senha, db=my_SQL_db)
+		print ("\n-----")
+		print ("Conexão realizada com sucesso!")
+		print ("-----\n")
+		break
+	except:
+		print ("\n-----")
+		print ("Dados incorretos - Por favor tente novamente")
+		print ("-----\n")
+		True
+	
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 try:
