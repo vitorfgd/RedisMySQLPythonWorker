@@ -1,0 +1,10 @@
+SELECT cad.cpf, uf.cd_uf as idUF
+FROM cad_usuario cad 
+INNER JOIN logradouro log ON(cad.log_cd_logradouro=log.cd_logradouro)
+INNER JOIN bairros b ON(log.bairros_cd_bairro=b.cd_bairro)
+INNER JOIN cidades cid ON(b.cidade_cd_cidade=cid.cd_cidade)
+INNER JOIN uf ON(cid.uf_cd_uf=uf.cd_uf);
+ 
+SELECT b.ds_bairro_nome as nomeBairro, cd_tipo_logradouro, ds_logradouro_nome,cep FROM logradouro
+
+select cd_uf from uf
