@@ -27,3 +27,10 @@ pip install redis
 ```
 pip install oursql
 ```
+
+# Quando chamar as funcões dos arquivos question, passar a conexão "r"
+
+EXEMPLO: 
+```
+question1_function (r)
+```
