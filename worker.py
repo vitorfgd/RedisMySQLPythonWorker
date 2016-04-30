@@ -14,7 +14,7 @@ from question8 import question8_function
 from question9 import question9_function
 
 def menu_questao1():
-	
+
     r_cpf = r.get('cpf')
     cpfs = r_cpf.split(',')
     i = 0
@@ -26,7 +26,7 @@ def menu_questao1():
 
     print "1 - Consultar Clientes e Mostrar os Pedidos"
     print "0 - Para sair\n"
-    
+
 def opcao_questao1(valor):
     if valor == "1":
         escolha = raw_input("Escolha o usuario por id: ")
@@ -54,7 +54,7 @@ def opcao_questao1(valor):
 #O programa então tenta conexão com o redis, caso consiga, prossegue, senão acusa o erro!
 
 while True:
-	my_SQL_host = raw_input ("Host MySQL (default: localhost): ")	
+	my_SQL_host = raw_input ("Host MySQL (default: localhost): ")
 	my_SQL_user = raw_input ("User MySQL: ")
 	my_SQL_senha = raw_input ("Password MySQL: ")
 	my_SQL_db = raw_input ("Database MySQL: ")
@@ -65,7 +65,7 @@ while True:
 		my_SQL_user = "root"
 		my_SQL_senha = "root"
 		my_SQL_db = "aulaivo"
-	
+
 	try:
 		db_mysql = oursql.connect(host = my_SQL_host, user=my_SQL_user, passwd=my_SQL_senha, db=my_SQL_db)
 		print(chr(27) + "[2J")
@@ -78,15 +78,83 @@ while True:
 		print ("Dados incorretos - Por favor tente novamente")
 		print ("-----\n")
 		True
-	
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 try:
     r.ping()
 except:
     print "Não foi possivel conectar ao Redis"
 
+#### POPULA O BANCO REDIS COM DADOS DO MYSQL!
+#### Para performace time iremos coletar o inicio e final da execução
+date_start = datetime.datetime.now()
+
+## Se a escolha for a questão 1:
+## Precisamos popular o basico do REDIS para nossas operações
+
+cursor = db_mysql.cursor(oursql.DictCursor)
+cursor.execute("""SELECT * FROM cad_usuario""")
+dados = cursor.fetchall()
+lista_cpf = []
+
+#Criar o Hash Redis cliente:cpf
+for cliente in dados:
+	string = "cpf:%s" %cliente['cpf']
+	r.hmset(string,cliente)
+	lista_cpf.append(cliente['cpf'])
+
+r.set('cpf',','.join(lista_cpf))
+
+#populamos os Pedidos
+cpfs = r.get('cpf').split(',')
+for cpf in cpfs:
+	cursor.execute("SELECT cod_pedido FROM pedidos WHERE cad_usuario_cpf = %s" %(cpf))
+	dados = cursor.fetchall()
+	lista_pedido = []
+	if len(dados) > 0:
+		for dado in dados:
+			lista_pedido.append(str(dado['cod_pedido']))
+		r.set('pedidos:'+cpf,','.join(lista_pedido))
+	else:
+		r.set('pedidos:'+cpf,'')
+
+#Populamos os estados
+cursor.execute("""
+SELECT cad.cpf, uf.cd_uf as idUF
+FROM cad_usuario cad
+INNER JOIN logradouro log ON(cad.log_cd_logradouro=log.cd_logradouro)
+INNER JOIN bairros b ON(log.bairros_cd_bairro=b.cd_bairro)
+INNER JOIN cidades cid ON(b.cidade_cd_cidade=cid.cd_cidade)
+INNER JOIN uf ON(cid.uf_cd_uf=uf.cd_uf);
+
+""")
+
+
+dados = cursor.fetchall()
+#Pegamos os estados mas precisamos apagar dados antigos
+chaves = r.keys('estado*')
+for chave in chaves:
+	r.delete(chave)
+estados = []
+for dado in dados:
+	if (r.get('estado:'+str(dado['idUF']))):
+		r.set('estado:'+str(dado['idUF']),r.get('estado:'+str(dado['idUF']))+','+str(dado['cpf']))
+	else:
+		r.set('estado:'+str(dado['idUF']),str(dado['cpf']))
+		estados.append(str(dado['idUF']))
+
+r.set('estado',','.join(estados))
+
+
+
+
+
+
+### Terimamos de povar o Redis vamos ver quanto tempo levou?
+date_finish = datetime.datetime.now()
+
 print ("-----")
+print ("Tempo para povoar o redis: %s" %(date_finish - date_start))
 print ("Selecione a questão: ")
 print ("\n1) Consultar o nome do usuário e retornar os pedidos deste usuário!")
 print ("2) Consultar o estado e retornar os usuários deste estado!")
@@ -101,36 +169,12 @@ print ("0) Sair")
 print ("-----")
 escolha = input ("\nDigite a questão: ")
 
-## Se a escolha for a questão 1:
-## Precisamos popular o basico do REDIS para nossas operações
+
+##### PRECISAMOS NOS ENTENDER COMO FUNCIONA AGORA!!!!
+
 if escolha == 1:
-	
+
 	print(chr(27) + "[2J")
-	cursor = db_mysql.cursor(oursql.DictCursor)
-	cursor.execute("""SELECT * FROM cad_usuario""")
-	dados = cursor.fetchall()
-	lista_cpf = []
-
-	#Criar o Hash Redis cliente:cpf
-	for cliente in dados:
-		string = "cpf:%s" %cliente['cpf']
-		r.hmset(string,cliente)
-		lista_cpf.append(cliente['cpf'])
-
-	r.set('cpf',','.join(lista_cpf))
-
-	#populamos os Pedidos
-	cpfs = r.get('cpf').split(',')
-	for cpf in cpfs:
-		cursor.execute("SELECT cod_pedido FROM pedidos WHERE cad_usuario_cpf = %s" %(cpf))
-		dados = cursor.fetchall()
-		lista_pedido = []
-		if len(dados) > 0:
-			for dado in dados:
-				lista_pedido.append(str(dado['cod_pedido']))
-			r.set('pedidos:'+cpf,','.join(lista_pedido))
-		else:
-			r.set('pedidos:'+cpf,'')
 
 	############### Vamos ao menu!!!!
 
@@ -142,29 +186,29 @@ if escolha == 1:
 			break
 		opcao_questao1(i)
 
+
 ## Se a escolha for a questão 2:
 ## Precisamos popular o REDIS com as informarcoes sobre os usuarios em um determinado Estado!
 elif escolha == 2:
-	
+
 
 	print(chr(27) + "[2J")
-	cursor = db_mysql.cursor(oursql.DictCursor)
-	
+
 	## Para apresentacao o cursor ira percorrer e apresentar todas as opcoes de estado!
 	cursor.execute("""SELECT * FROM uf""")
 	dados_estado = cursor.fetchall()
 	lista_estado = []
 	estado_index = 0
-	
+
 	print "-----"
 	for estado in dados_estado:
 		estado_index += 1
 		lista_estado.append(['ds_uf_nome'])
 		print "%d - %s" %(estado_index, estado['ds_uf_nome'])
-		
+
 	print "-----\n"
 	estado_escolha = input ("Por favor, digite o código do estado que deseja buscar: ")
-
+	opcao_questao2(i)
 
 elif escolha == 3:
 	print "Não implementado ainda"
@@ -174,18 +218,18 @@ elif escolha == 4:
 
 elif escolha == 5:
 	print "Não implementado ainda"
-	
+
 elif escolha == 6:
 	print "Não implementado ainda"
-	
+
 elif escolha == 7:
 	print "Não implementado ainda"
 
 elif escolha == 8:
 	print "Não implementado ainda"
-	
+
 elif escolha == 9:
 	print "Não implementado ainda"
-	
+
 elif escolha == 9:
 	quit ()
