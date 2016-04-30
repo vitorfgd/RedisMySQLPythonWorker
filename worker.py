@@ -3,6 +3,16 @@ import oursql
 import redis
 import datetime
 
+from question1 import question1_function
+from question2 import question2_function
+from question3 import question3_function
+from question4 import question4_function
+from question5 import question5_function
+from question6 import question6_function
+from question7 import question7_function
+from question8 import question8_function
+from question9 import question9_function
+
 def menu_questao1():
 	
     r_cpf = r.get('cpf')
