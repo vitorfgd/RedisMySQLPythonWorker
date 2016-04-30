@@ -123,6 +123,37 @@ for dado in dados:
 	string = "pedido:%s" %dado['cod_pedido']
 	r.hmset(string,dado)
 
+#Consultar as cidades e retornar os usuarios
+cursor.execute("""
+SELECT cad.cpf, cid.cd_cidade, cid.ds_cidade_nome
+FROM cad_usuario cad
+INNER JOIN logradouro log ON(cad.log_cd_logradouro=log.cd_logradouro)
+INNER JOIN bairros b ON(log.bairros_cd_bairro=b.cd_bairro)
+INNER JOIN cidades cid ON(b.cidade_cd_cidade=cid.cd_cidade)
+""")
+dados = cursor.fetchall()
+cidades = r.keys('cidade*')
+for cidade in cidades:
+	r.delete(cidade)
+
+cidades = []
+nomes_cidades = []
+for dado in dados:
+	if (r.get('cidade:'+str(dado['cd_cidade'])+':cpfs')):
+		string = str(r.get('cidade:'+str(dado['cd_cidade']+':cpfs')))+str(dado['cpf'])
+		r.set('cidade:'+str(dado['cd_cidade']+':cpfs',string))
+	else:
+		cidades.append(str(dado['cd_cidade']))
+		nomes_cidades.append(str(dado['ds_cidade_nome'].encode('utf-8')))
+		r.set('cidade:'+str(dado['cd_cidade'])+':cpfs',str(dado['cpf']))
+
+
+r.set('cidades',','.join(cidades))
+
+for i in range(len(nomes_cidades)):
+	codigo = 'cidade:%s' %cidades[i]
+	r.set(codigo,nomes_cidades[i])
+
 
 ### Terimamos de povar o Redis vamos ver quanto tempo levou?
 date_finish = datetime.datetime.now()
@@ -136,7 +167,7 @@ while menu:
 	print ("3) Consultar o produto e retornar os dados dos produtos!") #FEITO (BANCO)
 	print ("4) Consultar pelo pedido e retornar os dados do pedido!") #FEITO (BANCO)
 	print ("5) Consultar o usuário e retornar os dados do usuário!") # FEITO (BANCO)
-	print ("6) Consultar a cidade e retornar os dados do usuário!")
+	print ("6) Consultar a cidade e retornar os dados do usuário!") # FEITO (BANCO, EXECUCAO)
 	print ("7) Consultar o estado e retornar os dados de todos os logradouros deste estado!")
 	print ("8) Cadastrar um novo usuário!")
 	print ("9) Inserir um pedido para determinado usuário!")
@@ -160,7 +191,7 @@ while menu:
 		print "Não implementado ainda"
 
 	elif escolha == 6:
-		print "Não implementado ainda"
+		question6_function (r)
 
 	elif escolha == 7:
 		print "Não implementado ainda"
