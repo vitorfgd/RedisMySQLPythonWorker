@@ -80,7 +80,7 @@ for cpf in cpfs:
 ## ------------- START DA QUESTÃO 2 ------------- ##
 
 ##POPULA ESTADO
-#Executa o query para trazer como resultado o cpf da pessoa 
+#Executa o query para trazer como resultado o cpf da pessoa
 #e o estado referente à pessoa;
 
 cursor.execute("""
@@ -116,51 +116,62 @@ for dado in dados:
 	string = "produto:%s" %dado['cod_produto']
 	r.hmset(string,dado)
 
+#Pedidos
+cursor.execute("SELECT * FROM pedidos")
+dados = cursor.fetchall()
+for dado in dados:
+	string = "pedido:%s" %dado['cod_pedido']
+	r.hmset(string,dado)
+
+
 ### Terimamos de povar o Redis vamos ver quanto tempo levou?
 date_finish = datetime.datetime.now()
+menu = True
+while menu:
+	print ("-----")
+	print ("Tempo para povoar o redis: %s" %(date_finish - date_start))
+	print ("Selecione a questão: ")
+	print ("\n1) Consultar o nome do usuário e retornar os pedidos deste usuário!") #FEITO (BANCO,EXECUÇÃO)
+	print ("2) Consultar o estado e retornar os usuários deste estado!") #FEITO (BANCO,EXECUÇÃO)
+	print ("3) Consultar o produto e retornar os dados dos produtos!") #FEITO (BANCO)
+	print ("4) Consultar pelo pedido e retornar os dados do pedido!") #FEITO (BANCO)
+	print ("5) Consultar o usuário e retornar os dados do usuário!") # FEITO (BANCO)
+	print ("6) Consultar a cidade e retornar os dados do usuário!")
+	print ("7) Consultar o estado e retornar os dados de todos os logradouros deste estado!")
+	print ("8) Cadastrar um novo usuário!")
+	print ("9) Inserir um pedido para determinado usuário!")
+	print ("0) Sair")
+	print ("-----")
+	escolha = input ("\nDigite a questão: ")
 
-print ("-----")
-print ("Tempo para povoar o redis: %s" %(date_finish - date_start))
-print ("Selecione a questão: ")
-print ("\n1) Consultar o nome do usuário e retornar os pedidos deste usuário!")
-print ("2) Consultar o estado e retornar os usuários deste estado!")
-print ("3) Consultar o produto e retornar os dados dos produtos!")
-print ("4) Consultar pelo pedido e retornar os dados do pedido!")
-print ("5) Consultar o usuário e retornar os dados do usuário!")
-print ("6) Consultar a cidade e retornar os dados do usuário!")
-print ("7) Consultar o estado e retornar os dados de todos os logradouros deste estado!")
-print ("8) Cadastrar um novo usuário!")
-print ("9) Inserir um pedido para determinado usuário!")
-print ("0) Sair")
-print ("-----")
-escolha = input ("\nDigite a questão: ")
+	if escolha == 1:
+		question1_function (r, cursor)
 
-if escolha == 1:
-	question1_function (r, cursor)
-	
-elif escolha == 2:
-	question2_function (r, cursor)
+	elif escolha == 2:
+		question2_function (r, cursor)
 
-elif escolha == 3:
-	print "Não implementado ainda"
+	elif escolha == 3:
+		print "Não implementado ainda"
 
-elif escolha == 4:
-	print "Não implementado ainda"
+	elif escolha == 4:
+		print "Não implementado ainda"
 
-elif escolha == 5:
-	print "Não implementado ainda"
+	elif escolha == 5:
+		print "Não implementado ainda"
 
-elif escolha == 6:
-	print "Não implementado ainda"
+	elif escolha == 6:
+		print "Não implementado ainda"
 
-elif escolha == 7:
-	print "Não implementado ainda"
+	elif escolha == 7:
+		print "Não implementado ainda"
 
-elif escolha == 8:
-	print "Não implementado ainda"
+	elif escolha == 8:
+		print "Não implementado ainda"
 
-elif escolha == 9:
-	print "Não implementado ainda"
+	elif escolha == 9:
+		print "Não implementado ainda"
 
-elif escolha == 9:
-	quit ()
+	elif escolha == 9:
+		print "Não implementado ainda"
+	elif escolha == 0:
+		menu = False
