@@ -68,3 +68,4 @@ def question8_function(r, cursor):
 	if estado not in estados:
 		estados.append(estado)
 		r.set('estados',','.join(estados))
+	r.set('cpf:'+cpf+':pedidos','')
