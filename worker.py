@@ -1,4 +1,5 @@
 #encoding:utf-8
+
 import oursql
 import redis
 import datetime
@@ -46,24 +47,24 @@ except:
 #### Para performace time iremos coletar o inicio e final da execução
 date_start = datetime.datetime.now()
 
-## Se a escolha for a questão 1:
-## Precisamos popular o basico do REDIS para nossas operações
+## ------------- START DA QUESTÃO 1 ------------- ##
 
+## Precisamos popular o basico do REDIS para nossas operações
 cursor = db_mysql.cursor(oursql.DictCursor)
 cursor.execute("""SELECT * FROM cad_usuario""")
 dados = cursor.fetchall()
 lista_cpf = []
 
-#Criar o Hash Redis cliente:cpf
+#Criar o hash no formato (cpf:"cpf_do_usuário")
 for cliente in dados:
 	string = "cpf:%s" %cliente['cpf']
 	r.hmset(string,cliente)
 	lista_cpf.append(cliente['cpf'])
 
+#Guarda o pool de CPF
 r.set('cpf',','.join(lista_cpf))
-
-#populamos os Pedidos
 cpfs = r.get('cpf').split(',')
+
 for cpf in cpfs:
 	cursor.execute("SELECT cod_pedido FROM pedidos WHERE cad_usuario_cpf = %s" %(cpf))
 	dados = cursor.fetchall()
@@ -75,7 +76,13 @@ for cpf in cpfs:
 	else:
 		r.set('cpf:'+cpf+':pedidos','')
 
-#Populamos os estados
+## ------------- FIM DA QUESTÃO 1 ------------- ##
+## ------------- START DA QUESTÃO 2 ------------- ##
+
+##POPULA ESTADO
+#Executa o query para trazer como resultado o cpf da pessoa 
+#e o estado referente à pessoa;
+
 cursor.execute("""
 SELECT cad.cpf, uf.cd_uf as idUF
 FROM cad_usuario cad
@@ -85,20 +92,21 @@ INNER JOIN cidades cid ON(b.cidade_cd_cidade=cid.cd_cidade)
 INNER JOIN uf ON(cid.uf_cd_uf=uf.cd_uf);
 """)
 
-
 dados = cursor.fetchall()
+
 #Pegamos os estados mas precisamos apagar dados antigos
 chaves = r.keys('estado*')
 for chave in chaves:
 	r.delete(chave)
 estados = []
+
+#se existir dois no mesmo estado não duplica
 for dado in dados:
 	if (r.get('estado:'+str(dado['idUF']))):
 		r.set('estado:'+str(dado['idUF']),r.get('estado:'+str(dado['idUF']))+','+str(dado['cpf']))
 	else:
 		r.set('estado:'+str(dado['idUF']),str(dado['cpf']))
 		estados.append(str(dado['idUF']))
-
 r.set('estado',','.join(estados))
 
 #Produtos
@@ -107,7 +115,6 @@ dados = cursor.fetchall()
 for dado in dados:
 	string = "produto:%s" %dado['cod_produto']
 	r.hmset(string,dado)
-
 
 ### Terimamos de povar o Redis vamos ver quanto tempo levou?
 date_finish = datetime.datetime.now()
@@ -128,35 +135,11 @@ print ("0) Sair")
 print ("-----")
 escolha = input ("\nDigite a questão: ")
 
-
-##### PRECISAMOS NOS ENTENDER COMO FUNCIONA AGORA!!!!
-
 if escolha == 1:
 	question1_function (r, cursor)
-
-
-## Se a escolha for a questão 2:
-## Precisamos popular o REDIS com as informarcoes sobre os usuarios em um determinado Estado!
+	
 elif escolha == 2:
-
-
-	print(chr(27) + "[2J")
-
-	## Para apresentacao o cursor ira percorrer e apresentar todas as opcoes de estado!
-	cursor.execute("""SELECT * FROM uf""")
-	dados_estado = cursor.fetchall()
-	lista_estado = []
-	estado_index = 0
-
-	print "-----"
-	for estado in dados_estado:
-		estado_index += 1
-		lista_estado.append(['ds_uf_nome'])
-		print "%d - %s" %(estado_index, estado['ds_uf_nome'])
-
-	print "-----\n"
-	estado_escolha = input ("Por favor, digite o código do estado que deseja buscar: ")
-	opcao_questao2(i)
+	question2_function (r, cursor)
 
 elif escolha == 3:
 	print "Não implementado ainda"
