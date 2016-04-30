@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-def question1_function(r):
+def question1_function(r, cursor):
 
 	#recebe a pool de cpf do redis
 	r_cpf = r.get('cpf')
