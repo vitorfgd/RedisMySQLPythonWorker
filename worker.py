@@ -114,9 +114,9 @@ for cpf in cpfs:
 	if len(dados) > 0:
 		for dado in dados:
 			lista_pedido.append(str(dado['cod_pedido']))
-		r.set('pedidos:'+cpf,','.join(lista_pedido))
+		r.set('cpf:'+cpf+':pedidos',','.join(lista_pedido))
 	else:
-		r.set('pedidos:'+cpf,'')
+		r.set('cpf:'+cpf+':pedidos','')
 
 #Populamos os estados
 cursor.execute("""
@@ -126,7 +126,6 @@ INNER JOIN logradouro log ON(cad.log_cd_logradouro=log.cd_logradouro)
 INNER JOIN bairros b ON(log.bairros_cd_bairro=b.cd_bairro)
 INNER JOIN cidades cid ON(b.cidade_cd_cidade=cid.cd_cidade)
 INNER JOIN uf ON(cid.uf_cd_uf=uf.cd_uf);
-
 """)
 
 
@@ -145,9 +144,12 @@ for dado in dados:
 
 r.set('estado',','.join(estados))
 
-
-
-
+#Produtos
+cursor.execute("SELECT * FROM produto")
+dados = cursor.fetchall()
+for dado in dados:
+	string = "produto:%s" %dado['cod_produto']
+	r.hmset(string,dado)
 
 
 ### Terimamos de povar o Redis vamos ver quanto tempo levou?

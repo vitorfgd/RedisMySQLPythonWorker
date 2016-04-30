@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 def question1_function(r):
-	
+
 	#recebe a pool de cpf do redis
 	r_cpf = r.get('cpf')
 	cpfs = r_cpf.split(',')
-	
+
 	#limpa a tela das opcoes anteriores
 	print(chr(27) + "[2J")
-	
+
 	#apresenta os dados no formato ID - CPF - Nome
 	print ("Apresentação dos dados no formato 'ID - CPF - Nome': \n")
 	print ("-----")
-	
+
 	#ID é a iteracão i+1, cpf é o o vetor CPF na posicão i, nome vem da chave (cpf:"cpf da pessoa", nome)
 	for i in range(len(cpfs)):
 		print ("%s - %s - %s") %(i+1,cpfs[i],r.hmget('cpf:'+cpfs[i],'nome')[0])
@@ -24,17 +24,17 @@ def question1_function(r):
 
 	#depois que o usuario entrar com o ID, limpa a tela
 	print(chr(27) + "[2J")
-	
+
 	#Confirma a escolha dizendo Pedido para (cpf:"cpf da pessoa", nome)
 	print "\n-----\n"
 	print "Pedido para %s" %str(r.hmget('cpf:'+cpfs[int(escolha)-1],'nome')[0])
-	
+
 	#Define o formato de apresentacão como "Codigo do pedido - Data pedido - Faturado - Nao Faturado - Data Entrega"
 	print "Codigo do pedido - Data pedido - Faturado - Nao Faturado - Data Entrega"
-	
+
 	#pega todos os pedidos da chave (pedidos:"cpf da pessoa")
-	pedidos = r.get('pedidos:'+cpfs[int(escolha)-1])
-	
+	pedidos = r.get('cpf:'+cpfs[int(escolha)-1]+':pedidos')
+
 	#pedidos estão todos juntos como uma sting única separada por virgulas
 	#é feito o split para tornar um vetor de pedidos
 	pedidos = pedidos.split(',')
