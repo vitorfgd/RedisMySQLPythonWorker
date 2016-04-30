@@ -119,9 +119,12 @@ for dado in dados:
 #Pedidos
 cursor.execute("SELECT * FROM pedidos")
 dados = cursor.fetchall()
+pedidos = []
 for dado in dados:
 	string = "pedido:%s" %dado['cod_pedido']
 	r.hmset(string,dado)
+	pedidos.append(str(dado['cod_pedido']))
+r.set('pedidos',','.join(pedidos))
 
 #Consultar as cidades e retornar os usuarios
 cursor.execute("""
