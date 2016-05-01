@@ -109,14 +109,21 @@ for dado in dados:
 		estados.append(str(dado['idUF']))
 r.set('estado',','.join(estados))
 
-#Produtos
+## ------------- FIM DA QUESTÃO 2 ------------- ##
+## ------------- START DA QUESTÃO 3 ------------- ##
+
 cursor.execute("SELECT * FROM produto")
 dados = cursor.fetchall()
+produtos = []
 for dado in dados:
 	string = "produto:%s" %dado['cod_produto']
 	r.hmset(string,dado)
+	produtos.append (str(dado['cod_produto']))
+r.set('produtos',','.join(produtos))
 
-#Pedidos
+## ------------- FIM DA QUESTÃO 3 ------------- ##
+## ------------- START DA QUESTÃO 4 ------------- ##
+
 cursor.execute("SELECT * FROM pedidos")
 dados = cursor.fetchall()
 pedidos = []
@@ -125,6 +132,9 @@ for dado in dados:
 	r.hmset(string,dado)
 	pedidos.append(str(dado['cod_pedido']))
 r.set('pedidos',','.join(pedidos))
+
+## ------------- FIM DA QUESTÃO 4 ------------- ##
+## ------------- START DA QUESTÃO 5 ------------- ##
 
 #Consultar as cidades e retornar os usuarios
 cursor.execute("""
@@ -167,12 +177,12 @@ while menu:
 	print ("Selecione a questão: ")
 	print ("\n1) Consultar o nome do usuário e retornar os pedidos deste usuário!") #FEITO (BANCO,EXECUÇÃO)
 	print ("2) Consultar o estado e retornar os usuários deste estado!") #FEITO (BANCO,EXECUÇÃO)
-	print ("3) Consultar o produto e retornar os dados dos produtos!") #FEITO (BANCO)
-	print ("4) Consultar pelo pedido e retornar os dados do pedido!") #FEITO (BANCO)
+	print ("3) Consultar o produto e retornar os dados dos produtos!") #FEITO (BANCO, EXECUÇÃO)
+	print ("4) Consultar pelo pedido e retornar os dados do pedido!") #FEITO (BANCO, EXECUÇÃO)
 	print ("5) Consultar o usuário e retornar os dados do usuário!") # FEITO (BANCO)
-	print ("6) Consultar a cidade e retornar os dados do usuário!") # FEITO (BANCO, EXECUCAO)
+	print ("6) Consultar a cidade e retornar os dados do usuário!") # FEITO (BANCO, EXECUÇÃO)
 	print ("7) Consultar o estado e retornar os dados de todos os logradouros deste estado!")
-	print ("8) Cadastrar um novo usuário!")
+	print ("8) Cadastrar um novo usuário!") #FEITO (BANCO, EXECUÇÃO)
 	print ("9) Inserir um pedido para determinado usuário!")
 	print ("0) Sair")
 	print ("-----")
@@ -185,10 +195,10 @@ while menu:
 		question2_function (r, cursor)
 
 	elif escolha == 3:
-		print "Não implementado ainda"
+		question3_function (r, cursor)
 
 	elif escolha == 4:
-		print "Não implementado ainda"
+		question4_function (r, cursor)
 
 	elif escolha == 5:
 		print "Não implementado ainda"
