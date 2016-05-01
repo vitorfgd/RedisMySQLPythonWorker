@@ -3,6 +3,7 @@
 import oursql
 import redis
 import datetime
+import getpass
 
 from question1 import question1_function
 from question2 import question2_function
@@ -21,7 +22,7 @@ from question9 import question9_function
 while True:
 	my_SQL_host = raw_input ("Host MySQL (default: localhost): ")
 	my_SQL_user = raw_input ("User MySQL: ")
-	my_SQL_senha = raw_input ("Password MySQL: ")
+	my_SQL_senha = getpass.getpass ("Password MySQL: ")
 	my_SQL_db = raw_input ("Database MySQL: ")
 
 	try:
@@ -45,17 +46,18 @@ except:
 
 #### POPULA O BANCO REDIS COM DADOS DO MYSQL!
 #### Para performace time iremos coletar o inicio e final da execução
+
 date_start = datetime.datetime.now()
 
 ## ------------- START DA QUESTÃO 1 ------------- ##
 
-## Precisamos popular o basico do REDIS para nossas operações
+#Seleciona tudo do cad_usuário, isso vai ser usado para a questão 1 e 6
 cursor = db_mysql.cursor(oursql.DictCursor)
 cursor.execute("""SELECT * FROM cad_usuario""")
 dados = cursor.fetchall()
 lista_cpf = []
 
-#Criar o hash no formato (cpf:"cpf_do_usuário")
+#Cria o hash no formato (cpf:"cpf_do_usuário")
 for cliente in dados:
 	string = "cpf:%s" %cliente['cpf']
 	r.hmset(string,cliente)
@@ -136,6 +138,11 @@ r.set('pedidos',','.join(pedidos))
 ## ------------- FIM DA QUESTÃO 4 ------------- ##
 ## ------------- START DA QUESTÃO 5 ------------- ##
 
+# --- Já implementado pela questão 01 -- 
+
+## ------------- FIM DA QUESTÃO 5 ------------- ##
+## ------------- START DA QUESTÃO 6 ------------- ##
+
 #Consultar as cidades e retornar os usuarios
 cursor.execute("""
 SELECT cad.cpf, cid.cd_cidade, cid.ds_cidade_nome
@@ -144,11 +151,13 @@ INNER JOIN logradouro log ON(cad.log_cd_logradouro=log.cd_logradouro)
 INNER JOIN bairros b ON(log.bairros_cd_bairro=b.cd_bairro)
 INNER JOIN cidades cid ON(b.cidade_cd_cidade=cid.cd_cidade)
 """)
+
 dados = cursor.fetchall()
 cidades = r.keys('cidade*')
 for cidade in cidades:
 	r.delete(cidade)
 
+logradouro = []
 cidades = []
 nomes_cidades = []
 for dado in dados:
@@ -160,26 +169,38 @@ for dado in dados:
 		nomes_cidades.append(str(dado['ds_cidade_nome'].encode('utf-8')))
 		r.set('cidade:'+str(dado['cd_cidade'])+':cpfs',str(dado['cpf']))
 
-
 r.set('cidades',','.join(cidades))
 
 for i in range(len(nomes_cidades)):
 	codigo = 'cidade:%s' %cidades[i]
 	r.set(codigo,nomes_cidades[i])
 
+## ------------- FIM DA QUESTÃO 6 ------------- ##
+### ----- TERMINA A POPULACÃO DOS DADOS ----- ###
 
-### Terimamos de povar o Redis vamos ver quanto tempo levou?
 date_finish = datetime.datetime.now()
+print ("Tempo para povoar o redis: %s" %(date_finish - date_start))
+
+### ----- COMEÇA A INTERFACE COM O USER ----- ###
+
 menu = True
 while menu:
+	
+	menu_choice = str(raw_input ("\n----- \nCarregar o menu? (S - Voltar ao Menu / N - Sair do Programa): "))	
+	if menu_choice == "s" or menu_choice == "S":
+		menu = True
+	else:
+		menu = False
+		break
+		
+	print(chr(27) + "[2J")
 	print ("-----")
-	print ("Tempo para povoar o redis: %s" %(date_finish - date_start))
 	print ("Selecione a questão: ")
 	print ("\n1) Consultar o nome do usuário e retornar os pedidos deste usuário!") #FEITO (BANCO,EXECUÇÃO)
 	print ("2) Consultar o estado e retornar os usuários deste estado!") #FEITO (BANCO,EXECUÇÃO)
 	print ("3) Consultar o produto e retornar os dados dos produtos!") #FEITO (BANCO, EXECUÇÃO)
 	print ("4) Consultar pelo pedido e retornar os dados do pedido!") #FEITO (BANCO, EXECUÇÃO)
-	print ("5) Consultar o usuário e retornar os dados do usuário!") # FEITO (BANCO)
+	print ("5) Consultar o usuário e retornar os dados do usuário!") # FEITO (BANCO, EXECUÇÃO)
 	print ("6) Consultar a cidade e retornar os dados do usuário!") # FEITO (BANCO, EXECUÇÃO)
 	print ("7) Consultar o estado e retornar os dados de todos os logradouros deste estado!")
 	print ("8) Cadastrar um novo usuário!") #FEITO (BANCO, EXECUÇÃO)
@@ -201,7 +222,7 @@ while menu:
 		question4_function (r, cursor)
 
 	elif escolha == 5:
-		print "Não implementado ainda"
+		question5_function (r, cursor)
 
 	elif escolha == 6:
 		question6_function (r)
@@ -214,8 +235,6 @@ while menu:
 
 	elif escolha == 9:
 		print "Não implementado ainda"
-
-	elif escolha == 9:
-		print "Não implementado ainda"
+		
 	elif escolha == 0:
 		menu = False
