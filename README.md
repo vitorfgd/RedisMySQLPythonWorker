@@ -16,9 +16,7 @@ Apresentação 02/05/2016:
     - Inserir um pedido para determinado usuário.
 
 
-# Precisa executar antes
-
-Para funcionar precisa do redis e oursql instalado
+# EXECUTAR ANTES:
 
 ```
 pip install redis
@@ -28,9 +26,6 @@ pip install redis
 pip install oursql
 ```
 
-# Quando chamar as funcões dos arquivos question, passar a conexão "r"
+# NO LOGIN, ADICIONAR SUAS PRÓPRIAS INFORMAÇÕES
 
-EXEMPLO: 
-```
-question1_function (r)
-```
+# QUANDO CHAMAR FUNÇÃO PASSAR SEMPRE O CURSOR DO REDIS.
