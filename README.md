@@ -27,5 +27,6 @@ pip install oursql
 ```
 
 No login, adicionar suas próprias informações, por padrão o mysql e o redis utilizam localhost, root para o administrador, e em seguida a base que você deseja acessar
-
-# Quando chamar a função, passar o cursor do mysql e do redis.
+```
+Quando chamar a função, passar o cursor do mysql e do redis.
+```
