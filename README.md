@@ -16,7 +16,7 @@ Apresentação 02/05/2016:
     - Inserir um pedido para determinado usuário.
 
 
-# EXECUTAR ANTES:
+# Necessário para funcionar:
 
 ```
 pip install redis
@@ -26,6 +26,6 @@ pip install redis
 pip install oursql
 ```
 
-# NO LOGIN, ADICIONAR SUAS PRÓPRIAS INFORMAÇÕES
+No login, adicionar suas próprias informações, por padrão o mysql e o redis utilizam localhost, root para o administrador, e em seguida a base que você deseja acessar
 
-# QUANDO CHAMAR FUNÇÃO PASSAR SEMPRE O CURSOR DO REDIS.
+# Quando chamar a função, passar o cursor do mysql e do redis.
