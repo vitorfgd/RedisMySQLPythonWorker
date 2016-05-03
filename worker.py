@@ -176,6 +176,26 @@ for i in range(len(nomes_cidades)):
 	r.set(codigo,nomes_cidades[i])
 
 ## ------------- FIM DA QUESTÃO 6 ------------- ##
+## ------------- START DA QUESTÃO 7 ------------- ##
+
+cursor.execute("""SELECT est.ds_uf_sigla FROM uf est""")
+
+dados = cursor.fetchall()
+total_estados = []
+
+for dado in dados:
+	total_estados.append (str(dado['ds_uf_sigla']))
+r.set('total_estados',','.join(produtos))
+
+for var in total_estados:
+	cursor.execute(""" SELECT * FROM logradouro lo 
+	INNER JOIN bairros ba ON(lo.bairros_cd_bairro = ba.cd_bairro)
+	INNER JOIN cidades ci ON (ba.cidade_cd_cidade = ci.cd_cidade)
+	INNER JOIN uf ON (ci.uf_cd_uf = cd_uf)
+	WHERE ds_uf_sigla = "%s" """ %var)
+	dados = cursor.fetchall()
+
+## ------------- FIM DA QUESTÃO 7 ------------- ##
 ### ----- TERMINA A POPULACÃO DOS DADOS ----- ###
 
 date_finish = datetime.datetime.now()
