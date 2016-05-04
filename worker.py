@@ -243,7 +243,7 @@ while menu:
 		question8_function(r,cursor)
 
 	elif escolha == 9:
-		print "Não implementado ainda"
+		question9_function(r, cursor)
 		
 	elif escolha == 0:
 		menu = False

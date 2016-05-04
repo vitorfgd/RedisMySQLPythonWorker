@@ -69,3 +69,5 @@ def question8_function(r, cursor):
 		estados.append(estado)
 		r.set('estados',','.join(estados))
 	r.set('cpf:'+cpf+':pedidos','')
+	
+	
