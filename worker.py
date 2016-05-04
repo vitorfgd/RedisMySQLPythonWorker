@@ -44,11 +44,6 @@ try:
 except:
     print "Não foi possivel conectar ao Redis"
 
-
-chaves = r.keys('*')
-for chave in chaves:
-	r.delete (chave)
-
 #### POPULA O BANCO REDIS COM DADOS DO MYSQL!
 #### Para performace time iremos coletar o inicio e final da execução
 date_start = datetime.datetime.now()
