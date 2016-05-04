@@ -134,6 +134,18 @@ for dado in dados:
 	pedidos.append(str(dado['cod_pedido']))
 r.set('pedidos',','.join(pedidos))
 
+
+for pedido in pedidos:
+	cursor.execute("SELECT * FROM itemped WHERE ped_codpedidos = %s" %(str(pedido)))
+	dados = cursor.fetchall()
+	itempedido = []
+	for valor in dados:
+		chave = "pedido:%s:item:%s" %(pedido,str(valor['cod_itemp']))
+		r.hmset(chave,valor)
+		itempedido.append(str(valor['cod_itemp']))
+	r.set('pedido:'+str(pedido)+':items',','.join(itempedido))
+
+
 ## ------------- FIM DA QUESTÃO 4 ------------- ##
 ## ------------- START DA QUESTÃO 5 ------------- ##
 
