@@ -44,9 +44,13 @@ try:
 except:
     print "Não foi possivel conectar ao Redis"
 
+
+chaves = r.keys('*')
+for chave in chaves:
+	r.delete (chave)
+
 #### POPULA O BANCO REDIS COM DADOS DO MYSQL!
 #### Para performace time iremos coletar o inicio e final da execução
-
 date_start = datetime.datetime.now()
 
 ## ------------- START DA QUESTÃO 1 ------------- ##
@@ -178,22 +182,7 @@ for i in range(len(nomes_cidades)):
 ## ------------- FIM DA QUESTÃO 6 ------------- ##
 ## ------------- START DA QUESTÃO 7 ------------- ##
 
-cursor.execute("""SELECT est.ds_uf_sigla FROM uf est""")
-
-dados = cursor.fetchall()
-total_estados = []
-
-for dado in dados:
-	total_estados.append (str(dado['ds_uf_sigla']))
-r.set('total_estados',','.join(produtos))
-
-for var in total_estados:
-	cursor.execute(""" SELECT * FROM logradouro lo 
-	INNER JOIN bairros ba ON(lo.bairros_cd_bairro = ba.cd_bairro)
-	INNER JOIN cidades ci ON (ba.cidade_cd_cidade = ci.cd_cidade)
-	INNER JOIN uf ON (ci.uf_cd_uf = cd_uf)
-	WHERE ds_uf_sigla = "%s" """ %var)
-	dados = cursor.fetchall()
+# ---- Pop. feito pelo questão 2 ---- #
 
 ## ------------- FIM DA QUESTÃO 7 ------------- ##
 ### ----- TERMINA A POPULACÃO DOS DADOS ----- ###
@@ -248,7 +237,7 @@ while menu:
 		question6_function (r)
 
 	elif escolha == 7:
-		print "Não implementado ainda"
+		question7_function (r, cursor)
 
 	elif escolha == 8:
 		question8_function(r,cursor)
