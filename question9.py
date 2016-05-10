@@ -15,7 +15,7 @@ def question9_function(r,cursor):
 	pedidos = "S"
 	while pedidos.upper() != "N":
 		
-		pedidos = raw_input("Insira o codigo do produto(Digite N para sair): ")
+		pedidos = raw_input("Insira o codigo do produto - (Digite 'N' para sair): ")
 		
 		if pedidos.upper() != "N":
 			pedidos_qtd = int(raw_input("Insira a quantidade desse produto: "))

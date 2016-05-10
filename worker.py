@@ -189,7 +189,35 @@ for i in range(len(nomes_cidades)):
 ## ------------- FIM DA QUESTÃO 6 ------------- ##
 ## ------------- START DA QUESTÃO 7 ------------- ##
 
-# ---- Pop. feito pelo questão 2 ---- #
+#cursor.execute("""SELECT est.ds_uf_sigla FROM uf est""")
+
+#dados = cursor.fetchall()
+#total_estados = []
+
+#sub_date_start = datetime.datetime.now()
+
+#for dado in dados:
+	#total_estados.append (str(dado['ds_uf_sigla']))
+#r.set('total_estados',','.join(produtos))
+
+#porcentagem = 0
+
+#for var in total_estados:
+	#cursor.execute(""" SELECT * FROM logradouro lo 
+	#INNER JOIN bairros ba ON(lo.bairros_cd_bairro = ba.cd_bairro)
+	#INNER JOIN cidades ci ON (ba.cidade_cd_cidade = ci.cd_cidade)
+	#INNER JOIN uf ON (ci.uf_cd_uf = cd_uf)
+	#WHERE ds_uf_sigla = "%s" """ %var)
+	#dados2 = cursor.fetchall()
+	#cd_logradouro_pool = []
+	#porcentagem += 3.70
+	#print "%s%% - Populando: %s - %s segundos" %(str(porcentagem), str(var), str())
+	#for dado2 in dados2:
+		#string = 'estado:%s:logradouro:%s' %(var, str(dado2['cd_logradouro']))
+		#r.hmset(string,dado2)
+		#cd_logradouro_pool.append(str(dado2['cd_logradouro']))
+		#string2 = 'cd_logradouro_pool:%s' %(var)
+		#r.set (string2,','.join(cd_logradouro_pool))
 
 ## ------------- FIM DA QUESTÃO 7 ------------- ##
 ### ----- TERMINA A POPULACÃO DOS DADOS ----- ###
@@ -210,9 +238,9 @@ while menu:
 		break
 		
 	print(chr(27) + "[2J")
+	print ("Selecione a questão: \n")
 	print ("-----")
-	print ("Selecione a questão: ")
-	print ("\n1) Consultar o nome do usuário e retornar os pedidos deste usuário!") #FEITO (BANCO,EXECUÇÃO)
+	print ("1) Consultar o nome do usuário e retornar os pedidos deste usuário!") #FEITO (BANCO,EXECUÇÃO)
 	print ("2) Consultar o estado e retornar os usuários deste estado!") #FEITO (BANCO,EXECUÇÃO)
 	print ("3) Consultar o produto e retornar os dados dos produtos!") #FEITO (BANCO, EXECUÇÃO)
 	print ("4) Consultar pelo pedido e retornar os dados do pedido!") #FEITO (BANCO, EXECUÇÃO)

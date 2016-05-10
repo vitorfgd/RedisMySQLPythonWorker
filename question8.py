@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 def question8_function(r, cursor):
-	nome = raw_input("Dijite o nome: ")
-	email = raw_input("Dijite o email: ")
-	cpf = raw_input("Dijite o cpf: ")
-	rg = raw_input("Dijite o rg: ")
-	tel = raw_input("Dijite o telefone: ")
-	cel = raw_input("Dijite o celular: ")
+	nome = raw_input("Digite o nome: ")
+	email = raw_input("Digite o email: ")
+	cpf = raw_input("Digite o cpf: ")
+	rg = raw_input("Digite o rg: ")
+	tel = raw_input("Digite o telefone: ")
+	cel = raw_input("Digite o celular: ")
 
 	#VAMOS PEGAR A LISTA DE ESTADOS
 	print "Escolha o estado:"

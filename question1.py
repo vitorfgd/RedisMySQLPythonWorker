@@ -20,7 +20,7 @@ def question1_function(r, cursor):
 	print ("-----\n")
 
 	#espera o usuário digitar o ID.
-	escolha = raw_input("\nDigite o ID do usuario desejado: ")
+	escolha = raw_input("Digite o ID do usuario desejado: ")
 
 	#depois que o usuario entrar com o ID, limpa a tela
 	print(chr(27) + "[2J")
