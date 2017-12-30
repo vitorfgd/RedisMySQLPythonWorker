@@ -12,7 +12,7 @@
     - Cadastrar um novo usuário (question8.py).
     - Inserir um pedido para determinado usuário (question8.py).
 
-# Requisitos necessário para funcionamento correto da aplicação:
+# Requisitos necessário para funcionamento da aplicação:
 
 ```
 pip install redis
