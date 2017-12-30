@@ -22,4 +22,4 @@ pip install redis
 pip install oursql
 ```
 
-No login, adicionar suas próprias informações, por padrão o mysql e o redis utilizam localhost, root para o administrador, e em seguida a base que você deseja acessar. **Quando chamar a função, passar o cursor do mysql e do redis.**
+Adicionar suas próprias informações, por padrão o MySQL e o Redis utilizam localhost, root para o administrador, e em seguida a base que você deseja acessar. **Quando chamar a função, passar o cursor do mysql e do redis.**
